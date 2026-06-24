@@ -16,11 +16,60 @@ const zh = {
     console: '串口监视器',
     log: '会话日志',
     about: '关于',
+    makerTools: 'Maker Tools',
   },
   resources: {
     tutorial: '教程',
     buyCoffee: '请我喝杯咖啡',
     getHelp: '获取帮助',
+  },
+  makerTools: {
+    title: '创客工具',
+    subtitle: 'The Last Outpost Workshop 为 ESP32 和嵌入式项目提供的创客实用工具。',
+    thumbnailAlt: '{title} 教程缩略图',
+    support: {
+      title: '支持项目',
+      description:
+        '这些创客工具和 ESPConnect 都可免费使用。如果它们在你的工作台上帮到了你，一杯咖啡可以支持持续开发。',
+      action: '请我喝杯咖啡',
+    },
+    actions: {
+      openTool: '打开工具',
+      watchTutorial: '观看教程',
+      watchSpecific: '观看 {title} 教程',
+    },
+    items: {
+      espconnect: {
+        title: 'ESPConnect',
+        description:
+          'ESPConnect 是一个用于操作 ESP 设备的浏览器工具。它完全运行在现代 Chromium 浏览器中，可用于检查硬件详情、管理 SPIFFS、FAT 和 LittleFS 文件、备份 flash，以及部署 firmware。',
+        sourceLabel: 'thelastoutpostworkshop/ESPConnect',
+      },
+      partitionBuilder: {
+        title: 'ESP32 Partition Builder',
+        description:
+          'ESP32 Partition Builder 可帮助为 ESP32 开发板规划并创建自定义分区布局。',
+        sourceLabel: 'thelastoutpostworkshop/ESP32PartitionBuilder',
+      },
+      videoConversion: {
+        title: 'Video Conversion Studio',
+        description:
+          'Video Conversion Studio 可为嵌入式显示屏转换视频素材。你可以使用普通视频或音频文件，并将其转换为适合 ESP32 显示项目的输出。',
+        sourceLabel: 'thelastoutpostworkshop/video_conversion',
+      },
+      gpioViewer: {
+        title: 'GPIOViewer',
+        description:
+          'GPIOViewer 可直接在网页浏览器中实时显示 GPIO 引脚活动，便于检查引脚状态、确认开发板行为，并排查接线或信号活动问题。',
+        sourceLabel: 'thelastoutpostworkshop/gpio_viewer',
+      },
+      arduinoMakerWorkshop: {
+        title: 'Arduino Maker Workshop',
+        description:
+          'Arduino Maker Workshop 是面向 Arduino 创客开发的 VS Code 扩展，为基于 sketch 的项目和围绕开发板的迭代提供更专注的编辑器工作流。',
+        sourceLabel: 'VS Code Marketplace 扩展',
+      },
+    },
   },
   actions: {
     connect: '连接',

@@ -1,6 +1,9 @@
 # Changelog
 
 ## 1.1.15
+### Improvement
+- Added a Maker Tools page under Resources with links, tutorials, and thumbnails for companion maker utilities.
+
 ### Internal runtime
 - Bump tasmota-webserial-esptool from 7.3.7 to 7.3.10.
 - Bump Electron from 42.2.0 to 42.5.0.

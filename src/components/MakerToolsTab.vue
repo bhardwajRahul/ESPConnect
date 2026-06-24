@@ -1,0 +1,513 @@
+<script setup lang="ts">
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
+import arduinoMakerWorkshopThumbnail from '../assets/tool-thumbnails/arduino-maker-workshop.jpg';
+import espConnectThumbnail from '../assets/tool-thumbnails/espconnect.jpg';
+import gpioViewerThumbnail from '../assets/tool-thumbnails/gpio-viewer.jpg';
+import partitionBuilderThumbnail from '../assets/tool-thumbnails/partition-builder.jpg';
+import videoConversionThumbnail from '../assets/tool-thumbnails/video-conversion.jpg';
+
+interface ToolItem {
+  key: string;
+  titleKey: string;
+  icon: string;
+  url: string;
+  descriptionKey: string;
+  thumbnailSrc: string;
+  actionIcon?: string;
+  actionLabelKey?: string;
+  sourceUrl?: string;
+  sourceLabelKey?: string;
+  tutorialUrl?: string;
+}
+
+interface ToolCardItem extends ToolItem {
+  title: string;
+  description: string;
+  actionLabel: string;
+  sourceLabel: string | null;
+  tutorialActionUrl: string | null;
+}
+
+const { t } = useI18n();
+
+const coffeeUrl = 'https://buymeacoffee.com/thelastoutpostworkshop';
+
+const toolItems: ToolItem[] = [
+  {
+    key: 'espconnect',
+    titleKey: 'makerTools.items.espconnect.title',
+    icon: 'mdi-connection',
+    url: 'https://thelastoutpostworkshop.github.io/ESPConnect/',
+    descriptionKey: 'makerTools.items.espconnect.description',
+    thumbnailSrc: espConnectThumbnail,
+    sourceUrl: 'https://github.com/thelastoutpostworkshop/ESPConnect',
+    sourceLabelKey: 'makerTools.items.espconnect.sourceLabel',
+    tutorialUrl: 'https://www.youtube.com/watch?v=-nhDKzBxHiI',
+  },
+  {
+    key: 'partition-builder',
+    titleKey: 'makerTools.items.partitionBuilder.title',
+    icon: 'mdi-table-cog',
+    url: 'https://thelastoutpostworkshop.github.io/ESP32PartitionBuilder/',
+    descriptionKey: 'makerTools.items.partitionBuilder.description',
+    thumbnailSrc: partitionBuilderThumbnail,
+    sourceUrl: 'https://github.com/thelastoutpostworkshop/ESP32PartitionBuilder',
+    sourceLabelKey: 'makerTools.items.partitionBuilder.sourceLabel',
+    tutorialUrl: 'https://www.youtube.com/watch?v=EuHxodrye6E',
+  },
+  {
+    key: 'video-conversion',
+    titleKey: 'makerTools.items.videoConversion.title',
+    icon: 'mdi-movie-cog-outline',
+    url: 'https://thelastoutpostworkshop.github.io/video_conversion/',
+    descriptionKey: 'makerTools.items.videoConversion.description',
+    thumbnailSrc: videoConversionThumbnail,
+    sourceUrl: 'https://github.com/thelastoutpostworkshop/video_conversion',
+    sourceLabelKey: 'makerTools.items.videoConversion.sourceLabel',
+    tutorialUrl: 'https://www.youtube.com/watch?v=bFq05qXqin0',
+  },
+  {
+    key: 'gpio-viewer',
+    titleKey: 'makerTools.items.gpioViewer.title',
+    icon: 'mdi-chip',
+    url: 'https://www.youtube.com/watch?v=JJzRXcQrl3I',
+    actionIcon: 'mdi-youtube',
+    actionLabelKey: 'makerTools.actions.watchTutorial',
+    descriptionKey: 'makerTools.items.gpioViewer.description',
+    thumbnailSrc: gpioViewerThumbnail,
+    sourceUrl: 'https://github.com/thelastoutpostworkshop/gpio_viewer',
+    sourceLabelKey: 'makerTools.items.gpioViewer.sourceLabel',
+  },
+  {
+    key: 'arduino-maker-workshop',
+    titleKey: 'makerTools.items.arduinoMakerWorkshop.title',
+    icon: 'mdi-microsoft-visual-studio-code',
+    url: 'https://marketplace.visualstudio.com/items?itemName=TheLastOutpostWorkshop.arduino-maker-workshop',
+    descriptionKey: 'makerTools.items.arduinoMakerWorkshop.description',
+    thumbnailSrc: arduinoMakerWorkshopThumbnail,
+    sourceLabelKey: 'makerTools.items.arduinoMakerWorkshop.sourceLabel',
+    tutorialUrl: 'https://www.youtube.com/watch?v=rduTUUVkzqM',
+  },
+];
+
+const toolCards = computed<ToolCardItem[]>(() =>
+  toolItems.map(tool => ({
+    ...tool,
+    title: t(tool.titleKey),
+    description: t(tool.descriptionKey),
+    actionLabel: t(tool.actionLabelKey ?? 'makerTools.actions.openTool'),
+    sourceLabel: tool.sourceLabelKey ? t(tool.sourceLabelKey) : null,
+    tutorialActionUrl: getTutorialActionUrl(tool),
+  })),
+);
+
+function getTutorialActionUrl(tool: ToolItem): string | null {
+  if (tool.tutorialUrl) {
+    return tool.tutorialUrl;
+  }
+
+  return getYoutubeVideoId(tool.url) ? tool.url : null;
+}
+
+function getYoutubeVideoId(url: string | null | undefined): string | null {
+  if (!url) {
+    return null;
+  }
+
+  try {
+    const parsedUrl = new URL(url);
+    const hostname = parsedUrl.hostname.toLowerCase().replace(/^www\./, '');
+
+    if (hostname === 'youtu.be') {
+      return normalizeYoutubeVideoId(parsedUrl.pathname.split('/').filter(Boolean)[0]);
+    }
+
+    if (hostname === 'youtube.com' || hostname.endsWith('.youtube.com')) {
+      if (parsedUrl.pathname === '/watch') {
+        return normalizeYoutubeVideoId(parsedUrl.searchParams.get('v'));
+      }
+
+      const pathMatch = parsedUrl.pathname.match(/^\/(?:embed|shorts|live)\/([^/?#]+)/);
+      return normalizeYoutubeVideoId(pathMatch?.[1]);
+    }
+  } catch {
+    return null;
+  }
+
+  return null;
+}
+
+function normalizeYoutubeVideoId(value: string | null | undefined): string | null {
+  const videoId = value?.trim();
+  return videoId && /^[A-Za-z0-9_-]{11}$/.test(videoId) ? videoId : null;
+}
+</script>
+
+<template>
+  <section class="maker-tools">
+    <header class="maker-tools__header">
+      <div>
+        <h2 class="maker-tools__title">{{ t('makerTools.title') }}</h2>
+        <p class="maker-tools__subtitle">
+          {{ t('makerTools.subtitle') }}
+        </p>
+      </div>
+    </header>
+
+    <div class="maker-tools__support">
+      <div class="maker-tools__support-icon" aria-hidden="true">
+        <v-icon icon="mdi-coffee-outline" size="28" />
+      </div>
+      <div class="maker-tools__support-copy">
+        <div class="maker-tools__support-title">{{ t('makerTools.support.title') }}</div>
+        <p>{{ t('makerTools.support.description') }}</p>
+      </div>
+      <v-btn color="primary" prepend-icon="mdi-coffee-outline" :href="coffeeUrl" target="_blank" rel="noopener">
+        {{ t('makerTools.support.action') }}
+      </v-btn>
+    </div>
+
+    <div class="maker-tools__grid">
+      <article v-for="(tool, index) in toolCards" :key="tool.key" class="maker-tools__card">
+        <div class="maker-tools__card-body">
+          <div class="maker-tools__media">
+            <a
+              v-if="tool.tutorialActionUrl"
+              class="maker-tools__thumbnail"
+              :href="tool.tutorialActionUrl"
+              target="_blank"
+              rel="noopener"
+              :aria-label="t('makerTools.actions.watchSpecific', { title: tool.title })"
+              :style="{ '--maker-tools-thumbnail-delay': `${index * 70}ms` }"
+            >
+              <img
+                :src="tool.thumbnailSrc"
+                :alt="t('makerTools.thumbnailAlt', { title: tool.title })"
+                loading="lazy"
+              />
+              <span class="maker-tools__thumbnail-icon" aria-hidden="true">
+                <v-icon :icon="tool.icon" size="18" />
+              </span>
+              <span class="maker-tools__play-badge" aria-hidden="true">
+                <v-icon icon="mdi-play" size="24" />
+              </span>
+            </a>
+            <div v-else class="maker-tools__icon" aria-hidden="true">
+              <v-icon :icon="tool.icon" size="28" />
+            </div>
+          </div>
+
+          <div class="maker-tools__copy">
+            <h3>{{ tool.title }}</h3>
+            <p>{{ tool.description }}</p>
+            <a
+              v-if="tool.sourceUrl && tool.sourceLabel"
+              class="maker-tools__source"
+              :href="tool.sourceUrl"
+              target="_blank"
+              rel="noopener"
+            >
+              {{ tool.sourceLabel }}
+            </a>
+            <div v-else-if="tool.sourceLabel" class="maker-tools__source-label">
+              {{ tool.sourceLabel }}
+            </div>
+          </div>
+        </div>
+
+        <v-divider />
+
+        <div class="maker-tools__actions">
+          <v-btn
+            v-if="tool.tutorialUrl"
+            color="primary"
+            prepend-icon="mdi-youtube"
+            variant="text"
+            :href="tool.tutorialUrl"
+            target="_blank"
+            rel="noopener"
+          >
+            {{ t('makerTools.actions.watchTutorial') }}
+          </v-btn>
+          <v-spacer />
+          <v-btn
+            color="primary"
+            :prepend-icon="tool.actionIcon ?? 'mdi-open-in-new'"
+            :href="tool.url"
+            target="_blank"
+            rel="noopener"
+          >
+            {{ tool.actionLabel }}
+          </v-btn>
+        </div>
+      </article>
+    </div>
+  </section>
+</template>
+
+<style scoped>
+.maker-tools {
+  display: grid;
+  gap: 18px;
+}
+
+.maker-tools__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.maker-tools__title {
+  margin: 0;
+  font-size: 1.55rem;
+  font-weight: 750;
+  line-height: 1.2;
+}
+
+.maker-tools__subtitle {
+  max-width: 720px;
+  margin: 8px 0 0;
+  color: color-mix(in srgb, var(--v-theme-on-surface) 68%, transparent);
+  line-height: 1.55;
+}
+
+.maker-tools__support {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  border: 1px solid color-mix(in srgb, var(--v-theme-primary) 18%, transparent);
+  border-radius: 8px;
+  padding: 16px;
+  background:
+    linear-gradient(135deg,
+      color-mix(in srgb, var(--v-theme-primary) 9%, transparent),
+      color-mix(in srgb, var(--v-theme-secondary) 7%, transparent)),
+    color-mix(in srgb, var(--v-theme-surface) 94%, transparent);
+}
+
+.maker-tools__support-icon,
+.maker-tools__icon {
+  display: grid;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--v-theme-primary) 24%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--v-theme-primary) 11%, var(--v-theme-surface));
+  color: rgb(var(--v-theme-primary));
+}
+
+.maker-tools__support-icon {
+  width: 52px;
+  height: 52px;
+}
+
+.maker-tools__support-title {
+  font-weight: 750;
+}
+
+.maker-tools__support-copy {
+  min-width: 0;
+}
+
+.maker-tools__support-copy p {
+  margin: 6px 0 0;
+  color: color-mix(in srgb, var(--v-theme-on-surface) 68%, transparent);
+  line-height: 1.5;
+}
+
+.maker-tools__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.maker-tools__card {
+  display: flex;
+  min-height: 248px;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--v-theme-on-surface) 12%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--v-theme-surface) 96%, transparent);
+  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.1);
+}
+
+.maker-tools__card-body {
+  display: grid;
+  flex: 1 1 auto;
+  grid-template-columns: minmax(150px, 190px) minmax(0, 1fr);
+  align-items: start;
+  gap: 16px;
+  padding: 16px;
+}
+
+.maker-tools__media {
+  min-width: 0;
+}
+
+.maker-tools__thumbnail {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--v-theme-on-surface) 16%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--v-theme-primary) 10%, var(--v-theme-surface));
+  color: #ffffff;
+  opacity: 0;
+  transform: translateY(8px) scale(0.985);
+  animation: maker-tools-thumbnail-enter 460ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: var(--maker-tools-thumbnail-delay, 0ms);
+}
+
+.maker-tools__thumbnail img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition:
+    filter 180ms ease,
+    transform 180ms ease;
+}
+
+.maker-tools__thumbnail::after {
+  position: absolute;
+  inset: 0;
+  content: '';
+  background:
+    linear-gradient(180deg, rgba(5, 20, 18, 0.08), rgba(5, 20, 18, 0.34)),
+    linear-gradient(90deg, color-mix(in srgb, var(--v-theme-primary) 24%, transparent), transparent 44%);
+}
+
+.maker-tools__thumbnail:hover img {
+  filter: saturate(1.08) contrast(1.03);
+  transform: scale(1.025);
+}
+
+.maker-tools__thumbnail:focus-visible {
+  outline: 2px solid rgb(var(--v-theme-primary));
+  outline-offset: 3px;
+}
+
+.maker-tools__thumbnail-icon,
+.maker-tools__play-badge {
+  position: absolute;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow: 0 10px 24px rgba(3, 13, 10, 0.22);
+}
+
+.maker-tools__thumbnail-icon {
+  top: 8px;
+  left: 8px;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: rgba(5, 20, 18, 0.62);
+}
+
+.maker-tools__play-badge {
+  top: 50%;
+  left: 50%;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: rgba(var(--v-theme-primary), 0.92);
+  transform: translate(-50%, -50%);
+}
+
+.maker-tools__icon {
+  width: 52px;
+  height: 52px;
+}
+
+.maker-tools__copy {
+  min-width: 0;
+}
+
+.maker-tools__copy h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 750;
+  line-height: 1.3;
+}
+
+.maker-tools__copy p {
+  margin: 8px 0 12px;
+  color: color-mix(in srgb, var(--v-theme-on-surface) 70%, transparent);
+  line-height: 1.5;
+}
+
+.maker-tools__source,
+.maker-tools__source-label {
+  color: rgb(var(--v-theme-primary));
+  font-size: 0.86rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.maker-tools__source:hover {
+  text-decoration: underline;
+}
+
+.maker-tools__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+}
+
+.maker-tools__actions :deep(.v-btn) {
+  min-width: 0;
+}
+
+.maker-tools__actions :deep(.v-btn__content) {
+  white-space: normal;
+}
+
+@keyframes maker-tools-thumbnail-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .maker-tools__thumbnail {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+}
+
+@media (max-width: 1180px) {
+  .maker-tools__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .maker-tools__support,
+  .maker-tools__card-body {
+    grid-template-columns: 1fr;
+  }
+
+  .maker-tools__actions {
+    flex-wrap: wrap;
+  }
+
+  .maker-tools__thumbnail {
+    max-width: 420px;
+  }
+}
+</style>
