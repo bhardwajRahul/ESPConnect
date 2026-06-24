@@ -163,7 +163,8 @@ function normalizeYoutubeVideoId(value: string | null | undefined): string | nul
         <div class="maker-tools__support-title">{{ t('makerTools.support.title') }}</div>
         <p>{{ t('makerTools.support.description') }}</p>
       </div>
-      <v-btn color="primary" prepend-icon="mdi-coffee-outline" :href="coffeeUrl" target="_blank" rel="noopener">
+      <v-btn class="maker-tools__support-button" prepend-icon="mdi-coffee-outline" :href="coffeeUrl" target="_blank"
+        rel="noopener">
         {{ t('makerTools.support.action') }}
       </v-btn>
     </div>
@@ -222,6 +223,7 @@ function normalizeYoutubeVideoId(value: string | null | undefined): string | nul
           <v-btn
             v-if="tool.tutorialUrl"
             color="primary"
+            class="maker-tools__action-btn"
             prepend-icon="mdi-youtube"
             variant="text"
             :href="tool.tutorialUrl"
@@ -232,7 +234,8 @@ function normalizeYoutubeVideoId(value: string | null | undefined): string | nul
           </v-btn>
           <v-spacer />
           <v-btn
-            color="primary"
+            class="maker-tools__action-btn"
+            variant="text"
             :prepend-icon="tool.actionIcon ?? 'mdi-open-in-new'"
             :href="tool.url"
             target="_blank"
@@ -248,8 +251,14 @@ function normalizeYoutubeVideoId(value: string | null | undefined): string | nul
 
 <style scoped>
 .maker-tools {
+  --maker-tools-accent: #35d6b8;
+  --maker-tools-panel: #11201d;
+  --maker-tools-panel-strong: #152824;
+  --maker-tools-line: rgba(93, 210, 185, 0.2);
+
   display: grid;
-  gap: 18px;
+  gap: 16px;
+  color: color-mix(in srgb, var(--v-theme-on-surface) 88%, #ffffff 12%);
 }
 
 .maker-tools__header {
@@ -278,24 +287,23 @@ function normalizeYoutubeVideoId(value: string | null | undefined): string | nul
   grid-template-columns: 52px minmax(0, 1fr) auto;
   align-items: center;
   gap: 16px;
-  border: 1px solid color-mix(in srgb, var(--v-theme-primary) 18%, transparent);
+  border: 1px solid var(--maker-tools-line);
   border-radius: 8px;
   padding: 16px;
   background:
-    linear-gradient(135deg,
-      color-mix(in srgb, var(--v-theme-primary) 9%, transparent),
-      color-mix(in srgb, var(--v-theme-secondary) 7%, transparent)),
-    color-mix(in srgb, var(--v-theme-surface) 94%, transparent);
+    linear-gradient(90deg, rgba(53, 214, 184, 0.08), transparent 70%),
+    var(--maker-tools-panel);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 .maker-tools__support-icon,
 .maker-tools__icon {
   display: grid;
   place-items: center;
-  border: 1px solid color-mix(in srgb, var(--v-theme-primary) 24%, transparent);
+  border: 1px solid rgba(53, 214, 184, 0.28);
   border-radius: 8px;
-  background: color-mix(in srgb, var(--v-theme-primary) 11%, var(--v-theme-surface));
-  color: rgb(var(--v-theme-primary));
+  background: rgba(53, 214, 184, 0.1);
+  color: var(--maker-tools-accent);
 }
 
 .maker-tools__support-icon {
@@ -317,21 +325,32 @@ function normalizeYoutubeVideoId(value: string | null | undefined): string | nul
   line-height: 1.5;
 }
 
+.maker-tools__support-button {
+  background: var(--maker-tools-accent) !important;
+  color: #06251f !important;
+  font-weight: 750;
+}
+
 .maker-tools__grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
+  gap: 14px;
 }
 
 .maker-tools__card {
+  position: relative;
   display: flex;
-  min-height: 248px;
+  min-height: 224px;
   flex-direction: column;
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--v-theme-on-surface) 12%, transparent);
+  border: 1px solid var(--maker-tools-line);
   border-radius: 8px;
-  background: color-mix(in srgb, var(--v-theme-surface) 96%, transparent);
-  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.1);
+  background:
+    linear-gradient(120deg, rgba(53, 214, 184, 0.06), transparent 42%),
+    var(--maker-tools-panel);
+  box-shadow:
+    0 12px 26px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 .maker-tools__card-body {
@@ -339,7 +358,7 @@ function normalizeYoutubeVideoId(value: string | null | undefined): string | nul
   flex: 1 1 auto;
   grid-template-columns: minmax(150px, 190px) minmax(0, 1fr);
   align-items: start;
-  gap: 16px;
+  gap: 18px;
   padding: 16px;
 }
 
@@ -353,9 +372,9 @@ function normalizeYoutubeVideoId(value: string | null | undefined): string | nul
   width: 100%;
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--v-theme-on-surface) 16%, transparent);
+  border: 1px solid rgba(53, 214, 184, 0.22);
   border-radius: 8px;
-  background: color-mix(in srgb, var(--v-theme-primary) 10%, var(--v-theme-surface));
+  background: var(--maker-tools-panel-strong);
   color: #ffffff;
   opacity: 0;
   transform: translateY(8px) scale(0.985);
@@ -417,7 +436,8 @@ function normalizeYoutubeVideoId(value: string | null | undefined): string | nul
   width: 44px;
   height: 44px;
   border-radius: 999px;
-  background: rgba(var(--v-theme-primary), 0.92);
+  background: rgba(53, 214, 184, 0.92);
+  color: #06251f;
   transform: translate(-50%, -50%);
 }
 
@@ -445,7 +465,7 @@ function normalizeYoutubeVideoId(value: string | null | undefined): string | nul
 
 .maker-tools__source,
 .maker-tools__source-label {
-  color: rgb(var(--v-theme-primary));
+  color: var(--maker-tools-accent);
   font-size: 0.86rem;
   font-weight: 700;
   overflow-wrap: anywhere;
@@ -455,11 +475,22 @@ function normalizeYoutubeVideoId(value: string | null | undefined): string | nul
   text-decoration: underline;
 }
 
+.maker-tools__card :deep(.v-divider) {
+  border-color: var(--maker-tools-line);
+  opacity: 1;
+}
+
 .maker-tools__actions {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 12px;
+  padding: 12px 16px;
+  background: rgba(9, 24, 21, 0.5);
+}
+
+.maker-tools__action-btn {
+  color: var(--maker-tools-accent) !important;
+  font-weight: 750;
 }
 
 .maker-tools__actions :deep(.v-btn) {
